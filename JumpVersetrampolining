@@ -1,0 +1,110 @@
+// === JumpVerse Transcript Website ===
+// Full stack: Node.js (Express) + Discord OAuth2 + Secure Role Check + HTML UI
+
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const DiscordStrategy = require('passport-discord').Strategy;
+const path = require('path');
+const fs = require('fs');
+const fetch = require('node-fetch');
+require('dotenv').config();
+
+const app = express();
+
+// === Config ===
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const CALLBACK_URL = process.env.CALLBACK_URL;
+const GUILD_ID = process.env.GUILD_ID;
+const SUPPORT_ROLE_ID = process.env.SUPPORT_ROLE_ID;
+const BOT_TOKEN = process.env.BOT_TOKEN;
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
+
+passport.use(new DiscordStrategy({
+  clientID: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
+  callbackURL: CALLBACK_URL,
+  scope: ['identify', 'guilds', 'guilds.members.read']
+}, (accessToken, refreshToken, profile, done) => {
+  process.nextTick(() => done(null, profile));
+}));
+
+app.use(session({ secret: 'jumpverse_secret', resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static(path.join(__dirname, 'public')));
+
+function checkAuth(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  res.redirect('/login');
+}
+
+async function hasSupportRole(userId) {
+  const res = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userId}`, {
+    headers: { Authorization: `Bot ${BOT_TOKEN}` }
+  });
+  const data = await res.json();
+  return data.roles && data.roles.includes(SUPPORT_ROLE_ID);
+}
+
+// === Routes ===
+app.get('/login', passport.authenticate('discord'));
+
+app.get('/callback', passport.authenticate('discord', {
+  failureRedirect: '/'
+}), (req, res) => {
+  res.redirect('/transcripts');
+});
+
+app.get('/logout', (req, res) => {
+  req.logout(err => res.redirect('/'));
+});
+
+app.get('/', (req, res) => {
+  res.send(`
+    <html>
+      <head><title>JumpVerse Transcripts</title></head>
+      <body style="font-family:sans-serif;text-align:center;padding-top:50px">
+        <h1>Welcome to JumpVerse Transcript Viewer</h1>
+        <p><a href="/login">🔐 Login with Discord</a></p>
+      </body>
+    </html>
+  `);
+});
+
+app.get('/transcripts', checkAuth, async (req, res) => {
+  const allowed = await hasSupportRole(req.user.id);
+  if (!allowed) {
+    return res.send(`
+      <html><body style="text-align:center;padding-top:50px">
+        <h2>⛔ Access Denied</h2>
+        <p>You must have the Support Team role.</p>
+        <a href="/logout">Logout</a>
+      </body></html>
+    `);
+  }
+
+  const transcriptDir = path.join(__dirname, 'transcripts');
+  if (!fs.existsSync(transcriptDir)) fs.mkdirSync(transcriptDir);
+  const files = fs.readdirSync(transcriptDir).reverse();
+
+  let listHTML = '<html><body style="font-family:sans-serif;padding:30px">';
+  listHTML += '<h1>📄 Ticket Transcripts</h1><ul>';
+
+  files.forEach(file => {
+    const [id, username] = file.replace('.txt', '').split('_');
+    const url = `https://paste.gg/${id}`; // Example placeholder
+    listHTML += `<li><strong>${username}</strong> - <a href="${url}" target="_blank">View Transcript</a></li>`;
+  });
+
+  listHTML += '</ul><br><a href="/logout">Logout</a>';
+  listHTML += '</body></html>';
+  res.send(listHTML);
+});
+
+// === Launch Server ===
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ JumpVerse Transcript Website running on http://localhost:${PORT}`));
