@@ -6,10 +6,12 @@ const DiscordStrategy = require("passport-discord").Strategy;
 
 const app = express();
 
+// === STATIC & TEMPLATE SETUP ===
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// === SESSION & AUTH ===
 app.use(session({
   secret: "secret-key",
   resave: false,
@@ -36,6 +38,7 @@ function ensureAuth(req, res, next) {
   res.redirect("/login");
 }
 
+// === ROUTES ===
 app.get("/", (req, res) => {
   res.render("index", { user: req.user });
 });
@@ -44,23 +47,23 @@ app.get("/login", passport.authenticate("discord"));
 
 app.get("/auth/discord/callback",
   passport.authenticate("discord", { failureRedirect: "/" }),
-  (req, res) => {
-    res.redirect("/");
-  }
+  (req, res) => res.redirect("/dashboard")
 );
 
 app.get("/logout", (req, res, next) => {
-  req.logout(function(err) {
+  req.logout(err => {
     if (err) return next(err);
     res.redirect("/");
   });
 });
 
 app.get("/dashboard", ensureAuth, (req, res) => {
-  res.send(`Welcome to the JumpVerse Dashboard, ${req.user.username}`);
+  res.render("dashboard", { username: req.user.username });
 });
 
+// === START SERVER ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
+
