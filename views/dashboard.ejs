@@ -1,124 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>JumpVerse Dashboard</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 30px;
-      background: #f4f6fb;
-    }
+<title>JumpVerse Dashboard</title>
+<style>
+body {
+font-family: sans-serif;
+text-align: center;
+padding: 30px;
+background: #f4f6fb;
+}
 
-    .button {
-      display: block;
-      width: 300px;
-      margin: 15px auto;
-      padding: 15px;
-      background-color: #5865F2;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 18px;
-      cursor: pointer;
-    }
+.button {
+display: block;
+width: 300px;
+margin: 15px auto;
+padding: 15px;
+background-color: #5865F2;
+color: white;
+border: none;
+border-radius: 8px;
+font-size: 18px;
+cursor: pointer;
+}
 
-    .panel {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 400px;
-      transform: translate(-50%, -50%);
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      z-index: 10;
-    }
+.panel {
+display: none;
+position: fixed;
+top: 50%;
+left: 50%;
+width: 400px;
+transform: translate(-50%, -50%);
+background: white;
+border-radius: 10px;
+padding: 20px;
+box-shadow: 0 0 20px rgba(0,0,0,0.3);
+z-index: 10;
+}
 
-    .close-btn {
-      float: right;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 20px;
-    }
+.close-btn {
+float: right;
+cursor: pointer;
+font-weight: bold;
+font-size: 20px;
+}
 
-    input, textarea {
-      width: 100%;
-      margin: 8px 0;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    /* Admin button */
-    .admin-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      font-size: 14px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-  </style>
+input, textarea {
+width: 100%;
+margin: 8px 0;
+padding: 8px;
+border: 1px solid #ccc;
+border-radius: 6px;
+}
+</style>
 </head>
 <body>
-  <h1>Welcome, <%= username %></h1>
+<h1>Welcome, <%= username %></h1>
 
-  <% if (isAdmin) { %>
-    <button class="admin-button" onclick="window.location.href='/admin'">🔧 Admin Panel</button>
-  <% } %>
+<button class="button" onclick="openPanel('loa')">📆 Submit LOA</button>
+<button class="button" onclick="openPanel('shift')">🕐 Plan Shift</button>
+<button class="button" onclick="openPanel('report')">📣 Report MR+</button>
+<a href="/logout"><button class="button" style="background-color: #f04747;">🚪 Logout</button></a>
 
-  <button class="button" onclick="openPanel('loa')">📆 Submit LOA</button>
-  <button class="button" onclick="openPanel('shift')">🕐 Plan Shift</button>
-  <button class="button" onclick="openPanel('report')">📣 Report MR+</button>
-  <a href="/logout"><button class="button" style="background-color: #f04747;">🚪 Logout</button></a>
+<!-- LOA Panel -->
+<div id="loa" class="panel">
+<span class="close-btn" onclick="closePanel('loa')">✖</span>
+<h2>Submit LOA</h2>
+<input type="text" placeholder="Roblox Username">
+<input type="date" placeholder="Start Date">
+<input type="date" placeholder="End Date">
+<textarea placeholder="Reason for LOA"></textarea>
+<button class="button">📨 Request LOA</button>
+</div>
 
-  <!-- LOA Panel -->
-  <div id="loa" class="panel">
-    <span class="close-btn" onclick="closePanel('loa')">✖</span>
-    <h2>Submit LOA</h2>
-    <input type="text" placeholder="Roblox Username">
-    <input type="date" placeholder="Start Date">
-    <input type="date" placeholder="End Date">
-    <textarea placeholder="Reason for LOA"></textarea>
-    <button class="button">📨 Request LOA</button>
-  </div>
+<!-- Shift Panel -->
+<div id="shift" class="panel">
+<span class="close-btn" onclick="closePanel('shift')">✖</span>
+<h2>Plan a Shift</h2>
+<input type="text" placeholder="Host Roblox Username">
+<input type="datetime-local" placeholder="Date and Time">
+<button class="button">✅ Plan Shift</button>
+</div>
 
-  <!-- Shift Panel -->
-  <div id="shift" class="panel">
-    <span class="close-btn" onclick="closePanel('shift')">✖</span>
-    <h2>Plan a Shift</h2>
-    <input type="text" placeholder="Host Roblox Username">
-    <input type="datetime-local" placeholder="Date and Time">
-    <button class="button">✅ Plan Shift</button>
-  </div>
+<!-- Report Panel -->
+<div id="report" class="panel">
+<span class="close-btn" onclick="closePanel('report')">✖</span>
+<h2>Report MR+</h2>
+<p>🚧 Coming Soon 🚧</p>
+</div>
 
-  <!-- Report Panel -->
-  <div id="report" class="panel">
-    <span class="close-btn" onclick="closePanel('report')">✖</span>
-    <h2>Report MR+</h2>
-    <p>🚧 Coming Soon 🚧</p>
-  </div>
-
-  <script>
-    function openPanel(id) {
-      document.getElementById(id).style.display = 'block';
-    }
-    function closePanel(id) {
-      document.getElementById(id).style.display = 'none';
-    }
-  </script>
-</body>
-</html>
-
-      document.getElementById(id).style.display = 'none';
-    }
-  </script>
+<script>
+function openPanel(id) {
+document.getElementById(id).style.display = 'block';
+}
+function closePanel(id) {
+document.getElementById(id).style.display = 'none';
+}
+</script>
 </body>
 </html>
