@@ -19,7 +19,8 @@ saveUninitialized: false
 passport.use(new DiscordStrategy({
 clientID: "1366121206763487352",
 clientSecret: "4jdIzHKuXNgMRoF3r_UAqwFck_my1aYP",
-callbackURL: "https://jumpversetrampolining-ml.onrender.com",
+callbackURL: "https://jumpversetrampolining-ml.onrender.com/auth/discord/callback
+",
 scope: ["identify"]
 }, function(accessToken, refreshToken, profile, done) {
 return done(null, profile);
