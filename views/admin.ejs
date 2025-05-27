@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+  <a href="/dashboard">Back to Dashboard</a>
+  <p>Only users with rank <%= minRank %>+ can access this page</p>
+
+  <h2>LOA Requests</h2>
+  <ul>
+    <% loaRequests.forEach(r => { %>
+      <li><strong><%= r.username %></strong>: <%= r.start %> to <%= r.end %> — <%= r.reason %></li>
+    <% }) %>
+  </ul>
+
+  <h2>Shift Plans</h2>
+  <ul>
+    <% shiftPlans.forEach(s => { %>
+      <li><strong><%= s.host %></strong> — <%= s.datetime %></li>
+    <% }) %>
+  </ul>
+
+  <h2>Report MR+</h2>
+  <p>Coming Soon 🔒</p>
+</body>
+</html>
