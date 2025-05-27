@@ -1,0 +1,12 @@
+body {
+  font-family: sans-serif;
+  background: linear-gradient(135deg, black, yellow);
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+a {
+  color: yellow;
+  text-decoration: none;
+  font-weight: bold;
+}
