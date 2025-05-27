@@ -45,14 +45,13 @@ app.get("/login", passport.authenticate("discord"));
 app.get("/callback",
   passport.authenticate("discord", { failureRedirect: "/" }),
   (req, res) => {
-    // Successful login, redirect home or wherever you want.
     res.redirect("/");
   }
 );
 
 app.get("/logout", (req, res, next) => {
   req.logout(function(err) {
-    if (err) { return next(err); }
+    if (err) return next(err);
     res.redirect("/");
   });
 });
@@ -64,10 +63,4 @@ app.get("/dashboard", ensureAuth, (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
-
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-console.log(`Server running on port ${PORT}`);
 });
