@@ -9,7 +9,7 @@ const app = express();
 // Replace these with your actual credentials
 const CLIENT_ID = "1366121206763487352";
 const CLIENT_SECRET = "4jdIzHKuXNgMRoF3r_UAqwFck_my1aYP";
-const CALLBACK_URL = "https://YOUR_PROJECT.repl.co/auth/discord/callback";
+const CALLBACK_URL = "https://jumpversetrampolining-ml.onrender.com/callback";
 
 // Express settings
 app.use(express.static("public"));
