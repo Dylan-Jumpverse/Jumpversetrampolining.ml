@@ -19,7 +19,7 @@ saveUninitialized: false
 passport.use(new DiscordStrategy({
 clientID: "1366121206763487352",
 clientSecret: "4jdIzHKuXNgMRoF3r_UAqwFck_my1aYP",
-callbackURL: "https://jumpversetrampolining-ml.onrender.com/auth/discord/callback
+callbackURL: "https://jumpversetrampolining-ml.onrender.com/callback
 ",
 scope: ["identify"]
 }, function(accessToken, refreshToken, profile, done) {
@@ -42,7 +42,7 @@ res.render("index", { user: req.user });
 });
 
 app.get("/login", passport.authenticate("discord"));
-app.get("/auth/discord/callback", passport.authenticate("discord", {
+app.get("/callback", passport.authenticate("discord", {
 failureRedirect: "/"
 }), (req, res) => {
 res.redirect("/");
