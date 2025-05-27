@@ -51,10 +51,28 @@
       border: 1px solid #ccc;
       border-radius: 6px;
     }
+
+    /* Admin button */
+    .admin-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      font-size: 14px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h1>Welcome, <%= username %></h1>
+
+  <% if (isAdmin) { %>
+    <button class="admin-button" onclick="window.location.href='/admin'">🔧 Admin Panel</button>
+  <% } %>
 
   <button class="button" onclick="openPanel('loa')">📆 Submit LOA</button>
   <button class="button" onclick="openPanel('shift')">🕐 Plan Shift</button>
@@ -93,6 +111,12 @@
       document.getElementById(id).style.display = 'block';
     }
     function closePanel(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+  </script>
+</body>
+</html>
+
       document.getElementById(id).style.display = 'none';
     }
   </script>
