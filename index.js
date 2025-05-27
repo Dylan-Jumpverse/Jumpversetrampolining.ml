@@ -11,19 +11,18 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(session({
-secret: "secret-key",
-resave: false,
-saveUninitialized: false
+  secret: "secret-key",
+  resave: false,
+  saveUninitialized: false
 }));
 
 passport.use(new DiscordStrategy({
-clientID: "1366121206763487352",
-clientSecret: "4jdIzHKuXNgMRoF3r_UAqwFck_my1aYP",
-callbackURL: "https://jumpversetrampolining-ml.onrender.com/callback
-",
-scope: ["identify"]
-}, function(accessToken, refreshToken, profile, done) {
-return done(null, profile);
+  clientID: "1366121206763487352",
+  clientSecret: "4jdIzHKuXNgMRoF3r_UAqwFck_my1aYP",
+  callbackURL: "https://jumpversetrampolining-ml.onrender.com/callback",
+  scope: ["identify"]
+}, (accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
 }));
 
 passport.serializeUser((user, done) => done(null, user));
@@ -33,29 +32,40 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function ensureAuth(req, res, next) {
-if (req.isAuthenticated()) return next();
-res.redirect("/login");
+  if (req.isAuthenticated()) return next();
+  res.redirect("/login");
 }
 
 app.get("/", (req, res) => {
-res.render("index", { user: req.user });
+  res.render("index", { user: req.user });
 });
 
 app.get("/login", passport.authenticate("discord"));
-app.get("/callback", passport.authenticate("discord", {
-failureRedirect: "/"
-}), (req, res) => {
-res.redirect("/");
-});
-app.get("/logout", (req, res) => {
-req.logout(() => {
-res.redirect("/");
-});
+
+app.get("/callback",
+  passport.authenticate("discord", { failureRedirect: "/" }),
+  (req, res) => {
+    // Successful login, redirect home or wherever you want.
+    res.redirect("/");
+  }
+);
+
+app.get("/logout", (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect("/");
+  });
 });
 
 app.get("/dashboard", ensureAuth, (req, res) => {
-res.send(`Welcome to the JumpVerse Dashboard, ${req.user.username}`);
+  res.send(`Welcome to the JumpVerse Dashboard, ${req.user.username}`);
 });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
